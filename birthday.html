@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>สุขสันต์วันแก่ของน่องเชลลลล</title>
+<title>สุขสันต์วันแก่ของน่องเชลลล</title>
 <link href="https://fonts.googleapis.com/css2?family=Itim&display=swap" rel="stylesheet" />
 <style>
 body {
@@ -29,13 +29,13 @@ body {
   padding: 20px 30px;
   border-radius: 20px;
   border: 4px dashed #cdb4db;
-  box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.10);
   color: #a2d2ff;
   font-size: 1.5em;
   max-width: 400px;
   animation: fadeIn 1.2s ease;
   position: relative;
-  z-index: 10;
+  z-index: 20;
   line-height: 1.6;
 }
 
@@ -44,11 +44,10 @@ body {
   font-size: 1.2em;
   color: #cdb4db;
   font-style: italic;
-  z-index: 10;
+  z-index: 20;
   position: relative;
 }
 
-/* ลูกโป่ง */
 .balloon {
   position: absolute;
   bottom: -100px;
@@ -56,9 +55,10 @@ body {
   height: 70px;
   border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
   background: var(--color);
-  box-shadow: inset -5px -10px 15px rgba(255 255 255 / 0.6);
+  box-shadow: inset -5px -10px 15px rgba(255,255,255,0.25);
   animation: floatUp 10s linear infinite;
   opacity: 0.7;
+  z-index: 10;
 }
 .balloon::after {
   content: '';
@@ -88,7 +88,6 @@ body {
   100% { background-position: 0% 50%; }
 }
 
-/* เค้ก */
 .cake {
   width: 100px;
   height: 60px;
@@ -99,7 +98,7 @@ body {
   box-shadow: 0 4px #cdb4db;
   cursor: pointer;
   user-select: none;
-  z-index: 20;
+  z-index: 22;
 }
 .cake::before {
   content: '';
@@ -135,7 +134,6 @@ body {
   100% { transform: scale(1.2); opacity: 0.7; }
 }
 
-/* overlay ดอกไม้ไฟเต็มจอ */
 .fireworks-overlay {
   position: fixed;
   top: 0;
@@ -144,20 +142,24 @@ body {
   height: 100vh;
   pointer-events: none;
   overflow: visible;
-  z-index: 9999;
+  z-index: 5;
 }
 
-/* ดอกไม้ไฟแต่ละเส้น (ขนาดใหญ่ + ระยะเวลา 5 วินาที) */
 .firework-particle {
   position: absolute;
-  width: 15px;
-  height: 15px;
-  background: red;
-  border-radius: 50%;
   opacity: 1;
   pointer-events: none;
-  animation: explodeParticle 5s forwards;
-  filter: drop-shadow(0 0 8px currentColor);
+  animation: explodeParticle 2.2s forwards ease-out;
+  text-align: center;
+  font-weight: bold;
+  font-size: 26px;
+  background: rgba(255,255,255,0.78);
+  color: #444;
+  border-radius: 6px;
+  padding: 0 4px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.10);
+  /* minimal text-shadow: just a light shadow for clarity */
+  text-shadow: 0 1px 3px rgba(180,180,180,0.1);
 }
 
 @keyframes explodeParticle {
@@ -165,9 +167,52 @@ body {
     transform: translate(0,0) scale(1);
     opacity: 1;
   }
+  25% {
+    transform: translate(var(--x), var(--y)) scale(1.2);
+    opacity: 1;
+  }
+  65% {
+    transform: translate(var(--x), var(--y)) scale(1.2);
+    opacity: 1;
+  }
   100% {
-    transform: translate(var(--x), var(--y)) scale(2.5);
+    transform: translate(var(--x), var(--y)) scale(1.2);
     opacity: 0;
+  }
+}
+
+/* Responsive tweaks */
+@media (max-width: 600px) {
+  .blessing {
+    font-size: 1.2em;
+    max-width: 95vw;
+    padding: 14px 8px;
+  }
+  .cake {
+    width: 70px;
+    height: 42px;
+    bottom: 15px;
+  }
+  .cake::before {
+    left: 20px;
+    width: 14px;
+    height: 14px;
+  }
+  .candle {
+    left: 33px;
+    top: -25px;
+    width: 5px;
+    height: 10px;
+  }
+  .flame {
+    left: 32px;
+    top: -32px;
+    width: 6px;
+    height: 6px;
+  }
+  .firework-particle {
+    font-size: 19px;
+    padding: 0 2px;
   }
 }
 </style>
@@ -183,14 +228,13 @@ body {
 
 <p class="from">จาก เจ้าของฟาร์มหมูเด้ง</p>
 
-<!-- เค้ก -->
-<div class="cake" id="cake">
+<div class="cake" id="cake" title="เป่าเค้กสิ!">
   <div class="candle"></div>
   <div class="flame"></div>
 </div>
 
-<!-- ลูกโป่งเยอะ ๆ -->
 <script>
+// สี balloon แบบเดิม
 const colors = ['#a2d2ff', '#ffafcc', '#cdb4db', '#ffc8dd', '#bde0fe'];
 for (let i = 0; i < 20; i++) {
   const balloon = document.createElement('div');
@@ -200,54 +244,82 @@ for (let i = 0; i < 20; i++) {
   balloon.style.animationDuration = (6 + Math.random() * 6) + 's';
   balloon.style.animationDelay = (Math.random() * 5) + 's';
   document.body.appendChild(balloon);
+  balloon.addEventListener('click', function(e){
+    balloon.style.opacity = 0;
+    setTimeout(()=>balloon.remove(), 230);
+    e.stopPropagation();
+  });
 }
-</script>
 
-<script>
+// ดอกไม้ไฟข้อความตรงๆ ไม่โค้ง และไม่ขึ้นทับ blessing
 const cake = document.getElementById('cake');
 
-function createFirework(x, y) {
-  const colors = ['#FF3F3F', '#FF9B1A', '#FFD93D', '#FFFFFF', '#FF6F61'];
-  const count = 30;
+function fireworksTextStraight(text, x, y) {
   const container = document.createElement('div');
   container.classList.add('fireworks-overlay');
   document.body.appendChild(container);
 
-  for (let i = 0; i < count; i++) {
+  const letters = text.split('');
+  const spread = 32;
+  const startX = x - (letters.length-1)*spread/2;
+
+  letters.forEach((letter, i) => {
+    const targetX = startX + i * spread;
+    const targetY = y + (Math.random()*24 - 12);
+
     const particle = document.createElement('div');
     particle.classList.add('firework-particle');
-    particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-    particle.style.left = x + 'px';
-    particle.style.top = y + 'px';
+    particle.textContent = letter;
+    particle.style.left = `${x}px`;
+    particle.style.top = `${y}px`;
+    particle.style.setProperty('--x', `${targetX - x}px`);
+    particle.style.setProperty('--y', `${targetY - y}px`);
 
-    const angle = (360 / count) * i;
-    const radius = 150 + Math.random() * 50;
-
-    const radian = angle * Math.PI / 180;
-    const translateX = Math.cos(radian) * radius;
-    const translateY = Math.sin(radian) * radius;
-    particle.style.setProperty('--x', translateX + 'px');
-    particle.style.setProperty('--y', translateY + 'px');
+    const delay = Math.random() * 0.5;
+    particle.style.animationDelay = `${delay}s`;
 
     container.appendChild(particle);
+
     particle.addEventListener('animationend', () => {
       particle.remove();
       if(container.childElementCount === 0) container.remove();
     });
-  }
-}
-
-function createMultipleFireworks() {
-  const fireworksCount = 11;
-  for(let i = 0; i < fireworksCount; i++) {
-    const x = Math.random() * window.innerWidth;
-    const y = Math.random() * window.innerHeight;
-    createFirework(x, y);
-  }
+  });
 }
 
 cake.addEventListener('click', () => {
-  createMultipleFireworks();
+  // หาตำแหน่ง blessing เพื่อให้พรุไม่ขึ้นทับ blessing
+  const blessing = document.querySelector('.blessing');
+  const blessingRect = blessing.getBoundingClientRect();
+  const margin = 20;
+
+  // พรุจะสุ่มแสดงนอกกรอบ blessing (บน/ล่าง/ซ้าย/ขวา)
+  const fireworksCount = 9;
+  for(let i=0;i<fireworksCount;i++) {
+    let x, y;
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    // แบบสุ่มโซน: 0=บน 1=ล่าง 2=ซ้าย 3=ขว
+    const zone = Math.floor(Math.random()*4);
+    if(zone===0) { // บน
+      x = Math.random() * (w - margin*2) + margin;
+      y = Math.random() * (blessingRect.top - margin) + margin;
+    } else if(zone===1) { // ล่าง
+      x = Math.random() * (w - margin*2) + margin;
+      y = Math.random() * (h - blessingRect.bottom - margin) + blessingRect.bottom + margin;
+    } else if(zone===2) { // ซ้าย
+      x = Math.random() * (blessingRect.left - margin) + margin;
+      y = Math.random() * (h - margin*2) + margin;
+    } else { // ขวา
+      x = Math.random() * (w - blessingRect.right - margin) + blessingRect.right + margin;
+      y = Math.random() * (h - margin*2) + margin;
+    }
+    fireworksTextStraight("Happy Birthday N'Chel", x, y);
+  }
+  cake.style.transform = "scale(1.15) rotate(-5deg)";
+  setTimeout(()=>cake.style.transform = "", 500);
+  cake.querySelector('.flame').style.animation = "flicker 0.12s 6 alternate";
+  setTimeout(()=>cake.querySelector('.flame').style.animation = "", 800);
 });
 </script>
 
